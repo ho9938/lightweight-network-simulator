@@ -19,7 +19,7 @@ def dfs(k, n, x, arr:list):
     for i in range(k):
         dfs(k, n-1, x+str(i), arr)
     
-def k_ary_n_cube(dir, k, n):
+def k_ary_n_cube(dir, k, n, dfree):
     nodes = []
     dfs(k, n, '', nodes)
 
@@ -32,7 +32,11 @@ def k_ary_n_cube(dir, k, n):
     channels = []
     for node in nodes:
         for i in range(n):
-            channels.append(str(i)+node)
+            if dfree:
+                for j in range(2):
+                    channels.append(str(i)+str(j)+node)
+            else:
+                channels.append(str(i)+node)
     
     with open(dir + "/channels.conf", 'w') as f:
         f.write("// [name] [length] [capacity]\n")
@@ -59,14 +63,23 @@ def k_ary_n_cube(dir, k, n):
                     pos = 0
                     while src[pos] == dst[pos]:
                         pos += 1
-                    f.write('c' + str(n-1-pos) + src + '\t')
+                    if dfree:
+                        if src[pos] < dst[pos] and src[pos] != 0:
+                            f.write('c' + str(n-1-pos) + '1' + src + '\t')
+                        else:
+                            f.write('c' + str(n-1-pos) + '0' + src + '\t')
+                    else:
+                        f.write('c' + str(n-1-pos) + src + '\t')
             f.write('\n')
         
         for channel in channels:
             f.write('c' + channel + '\t')
             for dst in nodes:
                 pos = (n-1) - int(channel[0])
-                _src = channel[1:]
+                if dfree:
+                    _src = channel[2:]
+                else:
+                    _src = channel[1:]
                 src = _src[:pos] + str((int(_src[pos])-1) % k) + _src[pos+1:]
                 if src == dst:
                     f.write('-' + '\t')
@@ -74,7 +87,13 @@ def k_ary_n_cube(dir, k, n):
                     pos = 0
                     while src[pos] == dst[pos]:
                         pos += 1
-                    f.write('c' + str(n-1-pos) + src + '\t')
+                    if dfree:
+                        if src[pos] < dst[pos] and src[pos] != 0:
+                            f.write('c' + str(n-1-pos) + '1' + src + '\t')
+                        else:
+                            f.write('c' + str(n-1-pos) + '0' + src + '\t')
+                    else:
+                        f.write('c' + str(n-1-pos) + src + '\t')
             f.write('\n')
 
     with open(dir + "/senario.conf", "w") as f:
@@ -91,10 +110,13 @@ def main():
         os.makedirs(dir)
 
     if len(sys.argv) == 5 and sys.argv[2] == 'k_ary_n_cube':
-            k_ary_n_cube(dir, int(sys.argv[3]), int(sys.argv[4]))
+            k_ary_n_cube(dir, int(sys.argv[3]), int(sys.argv[4]), False)
+    elif len(sys.argv) == 5 and sys.argv[2] == 'k_ary_n_cube_dfree':
+            k_ary_n_cube(dir, int(sys.argv[3]), int(sys.argv[4]), True)
     else:
         print("invalid command.. options you can use:")
         print('python setconf.py [alias] k_ary_n_cube [k] [n]')
+        print('python setconf.py [alias] k_ary_n_cube_dfree [k] [n]')
     
 if __name__ == '__main__':
     main()

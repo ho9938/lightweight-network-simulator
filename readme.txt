@@ -7,7 +7,9 @@ python setconf.py [alias] [network type] [args..]
 : sentence that starts with '//' is recognized as comment.
 : configuration files are saved into conf/[alias]/ directory.
 : to add packet generation senarios, modify senario.conf according to the comment.
-: in current version, we support k_ary_n_cube.
+: in current version, we support following algorithms:
+: - k_ary_n_cube
+: - k_ary_n_cube_dfree
 
 python main.py [conf_alias]
 : you can load network environment from the configuration files.
