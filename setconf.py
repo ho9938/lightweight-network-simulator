@@ -1,5 +1,6 @@
 import sys
 import os
+import random
 
 def chgbase(x, k, n):
     result = ''
@@ -18,7 +19,7 @@ def dfs(k, n, x, arr:list):
     
     for i in range(k):
         dfs(k, n-1, x+str(i), arr)
-    
+
 def k_ary_n_cube(dir, k, n, dfree):
     nodes = []
     dfs(k, n, '', nodes)
@@ -98,11 +99,18 @@ def k_ary_n_cube(dir, k, n, dfree):
 
     with open(dir + "/senario.conf", "w") as f:
         f.write("// [endpoint]\n")
-        f.write("50\n")
+        f.write("500\n")
 
         f.write('\n')
 
         f.write("// [tick] [source] [destination] [length]\n")
+
+        ticks = sorted(random.choices(range(50), k=50))
+        srcs = random.choices(range(len(nodes)), k=50)
+        dsts = random.choices(range(len(nodes)), k=50)
+        lens = random.choices(range(50), k=50)
+        for i in range(50):
+            f.write(str(ticks[i]) + ' n' + nodes[srcs[i]] + ' n' + nodes[dsts[i]] + ' ' + str(lens[i]) + '\n')
     
 def main():
     dir = 'conf/' + sys.argv[1]

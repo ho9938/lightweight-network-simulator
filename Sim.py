@@ -50,6 +50,8 @@ class Channel:
             return True
         if self.is_full():
             return False
+        if len(self.queue) == 0:
+            return False
         if self.queue[-1].next == -1:
             return True
         elif self.queue[-1].next == index:
@@ -296,6 +298,9 @@ class Sim:
             while len(node.senario) > 0 and node.senario[0].tick <= self.tick:
                 flitgen = node.senario[0]
                 node.senario.pop(0)
+
+                if node.name == flitgen.dst:
+                    continue
 
                 for _ in range(flitgen.length - 1):
                     index = len(self.flits)
