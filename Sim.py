@@ -24,14 +24,14 @@ class Flit:
         print("total tick since created: " + str(self.tottick))
     
 class Channel:
-    def __init__(self, name):
+    def __init__(self, name, length, capacity):
         self.name = name
         self.src = ''
         self.dst = ''
-        self.length = 0
+        self.length = length
         self.queue = []
         self.size = 0
-        self.capacity = 0
+        self.capacity = capacity
 
     def is_empty(self):
         return self.size == 0
@@ -116,60 +116,113 @@ class FlitGen:
         print("packet length: " + str(self.length))
 
 class Sim:
-    def __init__(self, maxtick):
-        self.maxtick = maxtick
+    def __init__(self, dir):
+        self.maxtick = -1
         self.tick = 0
         self.nodes = {}
         self.channels = {}
         self.routes = {}
         self.flits = []
+        self.dir = dir
     
     def init(self):
         self.readnodes()
         self.readchannels()
         self.readroutes()
+        self.readsenario()
         self.printstat()
 
+    def invalidconf(self, filename):
+        print("invalid " + filename)
+        exit(-1)
+
     def readnodes(self):
-        with open('conf/nodes.conf', 'r') as f:
+        with open(self.dir + '/nodes.conf', 'r') as f:
             for line in f.readlines():
-                if len(line) > 2 and line[:2] == "//":
+                if len(line) >= 2 and line[:2] == "//":
                     continue
                 args = line.split()
-                if len(args) == 1:
+                if len(args) == 0 :
+                    continue
+                elif len(args) == 1:
                     node = Node(args[0])
-                elif len(args) == 3:
-                    node.senario.append(FlitGen(int(args[0]), node.name, args[1], int(args[2])))
-                elif len(args) == 0 and node != None:
                     self.nodes[node.name] = node
-                    node = None
+                else:
+                    self.invalidconf('nodes.conf')
     
     def readchannels(self):
-        with open('conf/channels.conf', 'r') as f:
+        with open(self.dir + '/channels.conf', 'r') as f:
             for line in f.readlines():
-                if len(line) > 2 and line[:2] == "//":
+                if len(line) >= 2 and line[:2] == "//":
                     continue
                 args = line.split()
-                if len(args) == 1:
-                    channel = Channel(args[0])
-                if len(args) == 2:
-                    channel.capacity = int(args[0])
-                    channel.length = int(args[1])
-                elif len(args) == 0 and channel != None:
+                if len(args) == 0 :
+                    continue
+                elif len(args) == 3:
+                    channel = Channel(args[0], int(args[1]), int(args[2]))
                     self.channels[channel.name] = channel
-                    channel = None
+                else:
+                    self.invalidconf('channels.conf')
     
     def readroutes(self):
-        with open('conf/routes.conf', 'r') as f:
-            nodes = f.readline().split()
+        with open(self.dir + '/routes.conf', 'r') as f:
+            is_top = True
             for line in f.readlines():
-                if len(line) > 2 and line[:2] == "//":
+                if len(line) >= 2 and line[:2] == "//":
                     continue
-                src = line.split()[0]
+                args = line.split()
+                if len(args) == 0 :
+                    continue
+                if is_top:
+                    nodes = args
+                    if len(nodes) != len(self.nodes):
+                        self.invalidconf('routes.conf')
+                    for nodename in nodes:
+                        if nodename not in self.nodes:
+                            self.invalidconf('routes.conf')
+                    is_top = False
+                    continue
+
+                if len(args) != len(nodes) + 1:
+                    self.invalidconf('routes.conf')
+                src = args[0]
+                if (src not in self.nodes) and (src not in self.channels):
+                    self.invalidconf('routes.conf')
                 for dst, chn in zip(nodes, line.split()[1:]):
+                    if dst not in self.nodes:
+                        self.invalidconf('routes.conf')
                     if chn == '-':
                         continue
+                    elif not chn in self.channels:
+                        self.invalidconf('routes.conf')
                     self.routes[(src, dst)] = self.channels[chn]
+    
+    def readsenario(self):
+        with open(self.dir + '/senario.conf', 'r') as f:
+            is_top = True
+            for line in f.readlines():
+                if len(line) >= 2 and line[:2] == "//":
+                    continue
+                args = line.split()
+                if len(args) == 0 :
+                    continue
+                if is_top:
+                    if len(args) != 1:
+                        self.invalidconf('senario.conf')
+                    self.maxtick = int(args[0])
+                    is_top = False
+                    continue
+
+                if len(args) != 4:
+                    self.invalidconf('senario.conf')
+                tick, length = int(args[0]), int(args[3])
+                src, dst = args[1], args[2]
+                if src not in self.nodes or dst not in self.nodes:
+                    self.invalidconf('senario.conf')
+                self.nodes[src].senario.append(FlitGen(tick, src, dst, length))
+        
+        for node in self.nodes.values():
+            node.senario.sort(key=lambda x: x.tick)
                     
     def printstat(self):
         print("<Lightweigth Network Simulator>")

@@ -1,1 +1,3 @@
-*.conf
+__pycache__/
+*.tmp
+conf/

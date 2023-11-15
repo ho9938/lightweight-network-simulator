@@ -1,4 +1,6 @@
 from Sim import * 
+import sys
+import os
 
 breakpoints = set()
 
@@ -83,7 +85,19 @@ def parse(sim, args: list):
     return 1
 
 def main():
-    sim = Sim(50)
+    if len(sys.argv) != 2:
+        print("usage: python main.py [conf_alias]")
+        exit(-1)
+
+    dir = "conf/" + sys.argv[1]
+    if not os.path.isfile(dir + "/nodes.conf") or \
+        not os.path.isfile(dir + "/channels.conf") or \
+        not os.path.isfile(dir + "/routes.conf") or \
+        not os.path.isfile(dir + "/senario.conf"):
+        print("invalid configuration")
+        exit(-1)
+    
+    sim = Sim(dir)
     sim.init()
 
     while True:
