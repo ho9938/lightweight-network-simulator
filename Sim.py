@@ -32,6 +32,10 @@ class Channel:
         self.queue = []
         self.size = 0
         self.capacity = capacity
+    
+    def clear(self):
+        self.queue.clear()
+        self.size = 0
 
     def is_empty(self):
         return self.size == 0
@@ -82,6 +86,10 @@ class Node:
         self.name = name
         self.senario = []
         self.queue = []
+    
+    def clear(self):
+        self.senario.clear()
+        self.queue.clear()
 
     def refresh(self):
         for flit in self.queue:
@@ -198,6 +206,9 @@ class Sim:
                     elif not chn in self.channels:
                         self.invalidconf('routes.conf')
                     self.routes[(src, dst)] = self.channels[chn]
+                    if src in self.nodes:
+                        self.channels[chn].src = src
+                        self.channels[chn].dst = dst
     
     def readsenario(self):
         with open(self.dir + '/senario.conf', 'r') as f:
@@ -347,4 +358,11 @@ class Sim:
     
     def clear(self):
         self.tick = 0
+
+        for node in self.nodes.values():
+            node.clear()
+        for channel in self.channels.values():
+            channel.clear()
         self.flits.clear()
+
+        self.readsenario()
