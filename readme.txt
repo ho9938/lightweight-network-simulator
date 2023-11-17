@@ -29,6 +29,12 @@ python main.py [conf_alias]
 (LNS) b [tick]
 : set breakpoint at specified tick and print current breakpoints.
 
+(LNS) d
+: remove all breakpoints and print current breakpoints.
+
+(LNS) b [tick]
+: remove breakpoint at specified tick and print current breakpoints.
+
 (LNS) t
 : proceed the simulation for one tick.
 

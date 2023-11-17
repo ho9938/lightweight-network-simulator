@@ -38,6 +38,22 @@ def parse(sim, args: list):
             print()
         else:
             return -1
+    elif args[0] == 'd':
+        if len(args) == 1:
+            breakpoints.clear()
+            print("current breakpoints:", end=' ')
+            for b in breakpoints:
+                print(str(b), end=' ')
+            print()
+        elif len(args) == 2:
+            if int(args[1]) in breakpoints:
+                breakpoints.remove(int(args[1]))
+            print("current breakpoints:", end=' ')
+            for b in breakpoints:
+                print(str(b), end=' ')
+            print()
+        else:
+            return -1
     elif args[0] == 't':
         if len(args) == 1:
             sim.proceed()
