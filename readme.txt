@@ -10,6 +10,8 @@ python setconf.py [alias] [network type] [args..]
 : in current version, we support following algorithms:
 : - k_ary_n_cube
 : - k_ary_n_cube_dfree
+: - cube_connected_cycle
+: - cube_connected_cycle_dfree
 
 python main.py [conf_alias]
 : you can load network environment from the configuration files.

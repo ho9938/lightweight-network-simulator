@@ -1,4 +1,4 @@
-from Sim import * 
+from src.core.Sim import * 
 import sys
 import os
 
