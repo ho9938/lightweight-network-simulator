@@ -56,8 +56,8 @@ python main.py [conf_alias]
 (LNS) i [target]
 : print information of target (node, channel, flit)
 
-(LNS) i r [source] [destination]
-: search routing table for source->destination
+(LNS) i p [source] [destination]
+: search path from source to destination
 
 (LNS) q
 : exit the simulator

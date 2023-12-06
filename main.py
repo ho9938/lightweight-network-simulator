@@ -74,7 +74,7 @@ def parse(sim, args: list):
             sim.printchannels()
         elif target == 'f':
             sim.printflits()
-        elif target == 'r' and len(args) == 4:
+        elif target == 'p' and len(args) == 4:
             _src, _dst = args[2], args[3]
             if _src in sim.network.nodes:
                 src = sim.network.nodes[_src]
