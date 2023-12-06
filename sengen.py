@@ -2,7 +2,7 @@ import sys
 import os
 import random
 from src.network.KNC import KNC
-# from src.network.CCC import CCC
+from src.network.CCC import CCC
 # from src.network.SEN import SEN
 
 def main():

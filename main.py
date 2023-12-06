@@ -2,7 +2,7 @@ import sys
 import os
 from src.core.Sim import Sim
 from src.network.KNC import KNC, KNC_dfree
-# from src.network.CCC import CCC, CCC_dfree
+from src.network.CCC import CCC, CCC_dfree
 # from src.network.SEN import SEN, SEN_dfree
 
 breakpoints = set()

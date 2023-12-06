@@ -1,4 +1,3 @@
-import random
 from .elem.Node import Node
 from .elem.Channel import Channel
 
@@ -92,10 +91,9 @@ class KNC_dfree:
     def initchannels(self):
         channels = []
         for node in self.nodes.values():
-            index = node.name[1:]
             for i in range(self.n):
                 for j in range(2):
-                    channels.append(str(i)+str(j)+index)
+                    channels.append(str(i)+str(j)+node)
         for index in channels:
             name = 'c'+index
             self.channels[name] = Channel(name, self.chnlen, self.chncap)
