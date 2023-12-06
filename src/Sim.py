@@ -11,19 +11,21 @@ class Flit:
         self.next = next
         self.tick = 0
         self.tottick = 0
+        self.tothop = 0
     
     def printsummary(self):
         print('f' + str(self.index) + ':', end='\t')
         print(self.src.name + " -> " + self.dst.name + ',', end='\t')
-        print("current position: " + self.pos + ',', end='\t')
+        print("current position: " + (self.pos.name if self.pos else "removed") + ',', end='\t')
         print(str(self.tick) + " ticks in current queue")
 
     def printstat(self):
         print("source: " + self.src.name)
         print("destination: " + self.dst.name)
-        print("current position: " + str(self.pos))
+        print("current position: " + (self.pos.name if self.pos else "removed"))
         print("tick in current queue: " + str(self.tick))
         print("total tick since created: " + str(self.tottick))
+        print("total hop since created: " + str(self.tothop))
     
 class FlitGen:
     def __init__(self, tick, src, dst, length):
@@ -157,31 +159,33 @@ class Sim:
 
             if len(node.queue) > 0:
                 flit = node.queue[0]
-                target = self.network.route(node, flit.dst)
+                target = self.network.route(flit)
                 if not target:
                     node.queue.pop(0)
-                    flit.pos = "removed"
+                    flit.pos = None
                     flit.tick = 0
                 elif target.is_available(flit.index):
                     node.queue.pop(0)
                     target.queue.append(flit)
-                    flit.pos = target.name
+                    flit.pos = target
                     flit.tick = 0
 
         for channel in self.network.channels.values():
             if len(channel.queue) > 0:
                 flit = channel.queue[0]
                 if flit.tick >= channel.length:
-                    target = self.network.route(channel, flit.dst)
+                    target = self.network.route(flit)
                     if not target:
                         channel.queue.pop(0)
-                        flit.pos = "removed"
+                        flit.pos = None
                         flit.tick = 0
+                        flit.tothop += 1
                     elif target.is_available(flit.index):
                         channel.queue.pop(0)
                         target.queue.append(flit)
-                        flit.pos = target.name
+                        flit.pos = target
                         flit.tick = 0
+                        flit.tothop += 1
 
         for node in self.network.nodes.values():
             node.refresh()

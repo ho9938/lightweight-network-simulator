@@ -1,6 +1,6 @@
 import sys
 import os
-from src.Sim import Sim
+from src.Sim import Sim, Flit
 
 breakpoints = set()
 
@@ -10,17 +10,19 @@ def parse(sim, args: list):
     if args[0] == 'r':
         if len(args) == 1:
             sim.clear()
-            sim.proceed()
-            while sim.tick < sim.maxtick and sim.tick not in breakpoints:
+            while sim.tick < sim.maxtick:
                 sim.proceed()
+                if sim.tick in breakpoints:
+                    break
             print("simulation stopped at tick " + str(sim.tick))
         else:
             return -1
     elif args[0] == 'c':
         if len(args) == 1:
-            sim.proceed()
-            while sim.tick < sim.maxtick and sim.tick not in breakpoints:
+            while sim.tick < sim.maxtick:
                 sim.proceed()
+                if sim.tick in breakpoints:
+                    break
             print("simulation stopped at tick " + str(sim.tick))
         else:
             return -1
@@ -60,9 +62,10 @@ def parse(sim, args: list):
             print("simulation stopped at tick " + str(sim.tick))
         elif len(args) == 2:
             tick = sim.tick + int(args[1])
-            sim.proceed()
-            while sim.tick < sim.maxtick and sim.tick not in breakpoints and sim.tick < tick:
+            while sim.tick < sim.maxtick and sim.tick < tick:
                 sim.proceed()
+                if sim.tick in breakpoints:
+                    break
             print("simulation stopped at tick " + str(sim.tick))
         else:
             return -1
@@ -88,11 +91,13 @@ def parse(sim, args: list):
             else:
                 print("no such element")
                 return -1
-            result = sim.network.route(src, dst)
+            flit = Flit(-1, src, dst, -1)
+            result = sim.network.route(flit)
             while result:
-                print(result.name)
-                result = sim.network.route(result, dst)
-            print("(end)")
+                print(result.name, end=' -> ')
+                flit.pos = result
+                result = sim.network.route(flit)
+            print("(arrive)")
         elif target in sim.network.nodes:
             sim.network.nodes[target].printstat()
         elif target in sim.network.channels:

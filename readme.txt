@@ -50,9 +50,6 @@ python main.py [conf_alias]
 (LNS) i f
 : print information of all flits
 
-(LNS) i r
-: print routing table
-
 (LNS) i [target]
 : print information of target (node, channel, flit)
 

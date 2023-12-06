@@ -50,7 +50,8 @@ class CCC:
             name = 'c'+index
             self.channels[name] = Channel(name, self.chnlen, self.chncap)
 
-    def route(self, src, dst):
+    def route(self, flit):
+        src, dst = flit.pos, flit.dst
         if isinstance(src, Node):
             srcidx = src.name[1:]
         else: # channel
@@ -96,7 +97,8 @@ class CCC_DF:
             name = 'c'+index
             self.channels[name] = Channel(name, self.chnlen, self.chncap)
 
-    def route(self, src, dst):
+    def route(self, flit):
+        src, dst = flit.pos, flit.dst
         if isinstance(src, Node):
             srcidx = src.name[1:]
             phase = '00'
