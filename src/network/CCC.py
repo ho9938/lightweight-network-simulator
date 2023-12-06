@@ -65,7 +65,7 @@ class CCC:
         else:
             return self.channels['c' + srcidx[0] + '1' + srcidx[1:]]
 
-class CCC_dfree:
+class CCC_DF:
     def __init__(self, n):
         self.n = n
         self.nodes = {}

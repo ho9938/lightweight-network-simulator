@@ -1,9 +1,6 @@
 import sys
 import os
-from src.core.Sim import Sim
-from src.network.KNC import KNC, KNC_dfree
-from src.network.CCC import CCC, CCC_dfree
-# from src.network.SEN import SEN, SEN_dfree
+from src.Sim import Sim
 
 breakpoints = set()
 
@@ -112,27 +109,15 @@ def parse(sim, args: list):
     return 1
 
 def main():
-    if len(sys.argv) == 5 and sys.argv[2] == 'knc':
-        network = KNC(int(sys.argv[3]), int(sys.argv[4]))
-    elif len(sys.argv) == 5 and sys.argv[2] == 'knc_dfree':
-        network = KNC_dfree(int(sys.argv[3]), int(sys.argv[4]))
-    elif len(sys.argv) == 4 and sys.argv[2] == 'ccc':
-        network = CCC(int(sys.argv[3]))
-    elif len(sys.argv) == 4 and sys.argv[2] == 'ccc_dfree':
-        network = CCC_dfree(int(sys.argv[3]))
-    else:
+    if len(sys.argv) != 2:
         print("usage:")
-        print('python main.py [alias] knc [k] [n]')
-        print('python main.py [alias] knc_dfree [k] [n]')
-        print('python main.py [alias] ccc [n]')
-        print('python main.py [alias] ccc_dfree [n]')
-        exit(-1)
+        print("python main.py [alias]")
 
-    if not os.path.isfile("senarios/" + sys.argv[1] + ".sen"):
-        print("invalid senario")
+    if not os.path.isfile("conf/" + sys.argv[1] + ".conf"):
+        print("invalid configuration")
         exit(-1)
     
-    sim = Sim(network, sys.argv[1])
+    sim = Sim(sys.argv[1])
     sim.init()
 
     while True:

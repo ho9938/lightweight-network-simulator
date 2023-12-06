@@ -1,3 +1,7 @@
+from src.network.KNC import KNC, KNC_DF
+from src.network.CCC import CCC, CCC_DF
+# from src.network.SEN import SEN, SEN_DF
+
 class Flit:
     def __init__(self, index, src, dst, next):
         self.index = index
@@ -35,10 +39,10 @@ class FlitGen:
         print("packet length: " + str(self.length))
 
 class Sim:
-    def __init__(self, network, alias):
+    def __init__(self, alias):
         self.maxtick = -1
         self.tick = 0
-        self.network = network
+        self.network = None
         self.flits = []
         self.alias = alias
     
@@ -46,35 +50,48 @@ class Sim:
         self.readsenario()
         self.printstat()
 
-    def invalidconf(self, filename):
-        print("invalid " + filename)
+    def invalidconf(self):
+        print("invalid configuration")
         exit(-1)
 
     def readsenario(self):
-        with open("senarios/" + self.alias + ".sen", 'r') as f:
-            is_top = True
+        with open("conf/" + self.alias + ".conf", 'r') as f:
+            index = 0
             for line in f.readlines():
                 if len(line) >= 2 and line[:2] == "//":
                     continue
                 args = line.split()
                 if len(args) == 0 :
                     continue
-                if is_top:
-                    if len(args) != 1:
-                        self.invalidconf('senario.conf')
-                    self.maxtick = int(args[0])
-                    is_top = False
-                    continue
 
-                if len(args) != 4:
-                    self.invalidconf('senario.conf')
-                tick, length = int(args[0]), int(args[3])
-                _src, _dst = args[1], args[2]
-                if _src not in self.network.nodes or _dst not in self.network.nodes:
-                    self.invalidconf('senario.conf')
-                src = self.network.nodes[_src]
-                dst = self.network.nodes[_dst]
-                src.senario.append(FlitGen(tick, src, dst, length))
+                if index == 0:
+                    if len(args) == 3 and args[0] == 'KNC':
+                        self.network = KNC(int(args[1]), int(args[2]))
+                    elif len(args) == 3 and args[0] == 'KNC_DF':
+                        self.network = KNC_DF(int(args[1]), int(args[2]))
+                    elif len(args) == 2 and args[0] == 'CCC':
+                        self.network = CCC(int(args[1]))
+                    elif len(args) == 2 and args[0] == 'CCC_DF':
+                        self.network = CCC_DF(int(args[1]))
+                    else:
+                        self.invalidconf()
+                elif index == 1:
+                    if len(args) != 1:
+                        self.invalidconf()
+                    self.maxtick = int(args[0])
+                else:
+                    if len(args) != 4:
+                        self.invalidconf()
+                    tick, length = int(args[0]), int(args[3])
+                    _src, _dst = args[1], args[2]
+                    if _src not in self.network.nodes or _dst not in self.network.nodes:
+                        self.invalidconf()
+                    src = self.network.nodes[_src]
+                    dst = self.network.nodes[_dst]
+                    src.senario.append(FlitGen(tick, src, dst, length))
+                    
+                index += 1
+
         
         for node in self.network.nodes.values():
             node.senario.sort(key=lambda x: x.tick)

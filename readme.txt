@@ -5,19 +5,17 @@ This simulator is made to simulate routing algorithm and check deadlock state.
 python setconf.py [alias] [network type] [args..]
 : you can generate configuration files for specific network.
 : sentence that starts with '//' is recognized as comment.
-: configuration files are saved into conf/[alias]/ directory.
-: to add packet generation senarios, modify senario.conf according to the comment.
+: configuration files are saved into conf/[alias].conf
+: to add packet generation senarios, modify this file according to the comment.
 : in current version, we support following algorithms:
-: - k_ary_n_cube
-: - k_ary_n_cube_dfree
-: - cube_connected_cycle
-: - cube_connected_cycle_dfree
+: - KNC (k_ary_n_cube)
+: - KNC_DF (k_ary_n_cube_dfree)
+: - CCC (cube_connected_cycle)
+: - CCC_DF (cube_connected_cycle_dfree)
 
 python main.py [conf_alias]
 : you can load network environment from the configuration files.
-: the program prints information of nodes, channels, routes and senario.
-: in the routes table, row means current position, column means destination,
-: so that the value inside it means where to route the flit for those indices.
+: the program prints information of nodes, channels and senario.
 
 (LNS) r
 : run the simulation from the beginning.

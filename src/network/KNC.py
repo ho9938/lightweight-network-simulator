@@ -67,7 +67,7 @@ class KNC:
                 pos += 1
             return self.channels['c' + str(self.n-1-pos) + srcidx]
     
-class KNC_dfree:
+class KNC_DF:
     def __init__(self, k, n):
         self.k = k
         self.n = n
