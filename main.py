@@ -1,6 +1,9 @@
-from src.core.Sim import * 
 import sys
 import os
+from src.core.Sim import Sim
+from src.network.KNC import KNC, KNC_dfree
+# from src.network.CCC import CCC, CCC_dfree
+# from src.network.SEN import SEN, SEN_dfree
 
 breakpoints = set()
 
@@ -74,21 +77,29 @@ def parse(sim, args: list):
             sim.printchannels()
         elif target == 'f':
             sim.printflits()
-        elif target == 'r':
-            if len(args) == 2:
-                sim.printroutes()
-            elif len(args) == 4:
-                src, dst = args[2], args[3]
-                if (src, dst) in sim.routes:
-                    print(sim.routes[(src, dst)].name)
-                else:
-                    print("no such element")
+        elif target == 'r' and len(args) == 4:
+            _src, _dst = args[2], args[3]
+            if _src in sim.network.nodes:
+                src = sim.network.nodes[_src]
+            elif _src in sim.network.channels:
+                src = sim.network.channels[_src]
             else:
+                print("no such element")
                 return -1
-        elif target in sim.nodes:
-            sim.nodes[target].printstat()
-        elif target in sim.channels:
-            sim.channels[target].printstat()
+            if _dst in sim.network.nodes:
+                dst = sim.network.nodes[_dst]
+            else:
+                print("no such element")
+                return -1
+            result = sim.network.route(src, dst)
+            while result:
+                print(result.name)
+                result = sim.network.route(result, dst)
+            print("(end)")
+        elif target in sim.network.nodes:
+            sim.network.nodes[target].printstat()
+        elif target in sim.network.channels:
+            sim.network.channels[target].printstat()
         elif target[0] == 'f' and int(target[1:]) < len(sim.flits):
             sim.flits[int(target[1:])].printstat()
         else:
@@ -101,19 +112,27 @@ def parse(sim, args: list):
     return 1
 
 def main():
-    if len(sys.argv) != 2:
-        print("usage: python main.py [conf_alias]")
+    if len(sys.argv) == 5 and sys.argv[2] == 'knc':
+        network = KNC(int(sys.argv[3]), int(sys.argv[4]))
+    elif len(sys.argv) == 5 and sys.argv[2] == 'knc_dfree':
+        network = KNC_dfree(int(sys.argv[3]), int(sys.argv[4]))
+    elif len(sys.argv) == 4 and sys.argv[2] == 'ccc':
+        network = CCC(int(sys.argv[3]))
+    elif len(sys.argv) == 4 and sys.argv[2] == 'ccc_dfree':
+        network = CCC_dfree(int(sys.argv[3]))
+    else:
+        print("usage:")
+        print('python main.py [alias] knc [k] [n]')
+        print('python main.py [alias] knc_dfree [k] [n]')
+        print('python main.py [alias] ccc [n]')
+        print('python main.py [alias] ccc_dfree [n]')
         exit(-1)
 
-    dir = "conf/" + sys.argv[1]
-    if not os.path.isfile(dir + "/nodes.conf") or \
-        not os.path.isfile(dir + "/channels.conf") or \
-        not os.path.isfile(dir + "/routes.conf") or \
-        not os.path.isfile(dir + "/senario.conf"):
-        print("invalid configuration")
+    if not os.path.isfile("senarios/" + sys.argv[1] + ".sen"):
+        print("invalid senario")
         exit(-1)
     
-    sim = Sim(dir)
+    sim = Sim(network, sys.argv[1])
     sim.init()
 
     while True:
