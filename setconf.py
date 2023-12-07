@@ -34,7 +34,7 @@ def main():
         return -1
 
     file.write("// [endpoint]\n")
-    file.write("500\n\n")
+    file.write("1000\n\n")
 
     nodes = list(network.nodes.keys())
     ticks = sorted(random.choices(range(50), k=50))

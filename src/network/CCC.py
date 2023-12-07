@@ -51,7 +51,7 @@ class CCC:
             self.channels[name] = Channel(name, self.chnlen, self.chncap)
 
     def route(self, flit):
-        src, dst = flit.pos, flit.dst
+        src, dst, aux = flit.pos, flit.dst, abs(flit.aux)
         if isinstance(src, Node):
             srcidx = src.name[1:]
         else: # channel
@@ -61,6 +61,17 @@ class CCC:
         
         if srcidx == dstidx:
             return None
+        elif srcidx[1:] == dstidx[1:]:
+            return self.channels['c' + srcidx[0] + '0' + srcidx[1:]]
+        elif flit.aux > 0:
+            if int(srcidx[0]) == self.n-1:
+                flit.aux = -aux
+                if srcidx[-(int(srcidx[0])+1)] == dstidx[-(int(srcidx[0])+1)]:
+                    return self.channels['c' + srcidx[0] + '0' + srcidx[1:]]
+                else:
+                    return self.channels['c' + srcidx[0] + '1' + srcidx[1:]]
+            else:
+                return self.channels['c' + srcidx[0] + '0' + srcidx[1:]]
         elif srcidx[-(int(srcidx[0])+1)] == dstidx[-(int(srcidx[0])+1)]:
             return self.channels['c' + srcidx[0] + '0' + srcidx[1:]]
         else:
@@ -98,30 +109,28 @@ class CCC_DF:
             self.channels[name] = Channel(name, self.chnlen, self.chncap)
 
     def route(self, flit):
-        src, dst = flit.pos, flit.dst
+        src, dst, aux = flit.pos, flit.dst, abs(flit.aux)
         if isinstance(src, Node):
             srcidx = src.name[1:]
-            phase = '00'
         else: # channel
             _srcidx = src.name[2] + src.name[4:]
-            phase = src.name[1] + src.name[3]
             srcidx = in_dec(_srcidx, self.n) if src.name[3] == '0' else out_flip(_srcidx)
         dstidx = dst.name[1:]
         
         if srcidx == dstidx:
             return None
-        elif srcidx[1:] == dstidx[1:] or phase == '20':
+        elif srcidx[1:] == dstidx[1:]:
             return self.channels['c2' + srcidx[0] + '0' + srcidx[1:]]
-        elif phase == '00':
+        elif flit.aux > 0:
             if int(srcidx[0]) == self.n-1:
+                flit.aux = -aux
                 if srcidx[-(int(srcidx[0])+1)] == dstidx[-(int(srcidx[0])+1)]:
                     return self.channels['c1' + srcidx[0] + '0' + srcidx[1:]]
                 else:
                     return self.channels['c1' + srcidx[0] + '1' + srcidx[1:]]
             else:
                 return self.channels['c0' + srcidx[0] + '0' + srcidx[1:]]
-        elif phase == '10' or phase == '11':
-            if srcidx[-(int(srcidx[0])+1)] == dstidx[-(int(srcidx[0])+1)]:
-                return self.channels['c1' + srcidx[0] + '0' + srcidx[1:]]
-            else:
-                return self.channels['c1' + srcidx[0] + '1' + srcidx[1:]]
+        elif srcidx[-(int(srcidx[0])+1)] == dstidx[-(int(srcidx[0])+1)]:
+            return self.channels['c1' + srcidx[0] + '0' + srcidx[1:]]
+        else:
+            return self.channels['c1' + srcidx[0] + '1' + srcidx[1:]]
