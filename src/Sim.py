@@ -1,6 +1,6 @@
 from src.network.KNC import KNC, KNC_DF
 from src.network.CCC import CCC, CCC_DF
-from src.network.SEN import SEN#, SEN_DF
+from src.network.SEN import SEN, SEN_DF
 
 class Flit:
     def __init__(self, index, src, dst, next):
@@ -78,8 +78,8 @@ class Sim:
                         self.network = CCC_DF(int(args[1]))
                     elif len(args) == 2 and args[0] == 'SEN':
                         self.network = SEN(int(args[1]))
-                    # elif len(args) == 2 and args[0] == 'SEN_DF':
-                    #     self.network = SEN_DF(int(args[1]))
+                    elif len(args) == 2 and args[0] == 'SEN_DF':
+                        self.network = SEN_DF(int(args[1]))
                     else:
                         self.invalidconf()
                 elif index == 1:

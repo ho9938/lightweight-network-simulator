@@ -93,6 +93,7 @@ def parse(sim, args: list):
                 return 1
             flit = Flit(-1, src, dst, -1)
             result = sim.network.route(flit)
+            flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
             while result:
                 print(result.name, end=' -> ')
                 flit.pos = result
