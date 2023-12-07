@@ -85,17 +85,18 @@ def parse(sim, args: list):
                 src = sim.network.channels[_src]
             else:
                 print("no such element")
-                return -1
+                return 1
             if _dst in sim.network.nodes:
                 dst = sim.network.nodes[_dst]
             else:
                 print("no such element")
-                return -1
+                return 1
             flit = Flit(-1, src, dst, -1)
             result = sim.network.route(flit)
             while result:
                 print(result.name, end=' -> ')
                 flit.pos = result
+                flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
                 result = sim.network.route(flit)
             print("(arrive)")
         elif target in sim.network.nodes:

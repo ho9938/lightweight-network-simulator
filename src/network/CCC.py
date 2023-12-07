@@ -1,5 +1,5 @@
-from .elem.Node import Node
-from .elem.Channel import Channel
+from src.network.elem.Node import Node
+from src.network.elem.Channel import Channel
 
 def out_flip(x):
     dim = int(x[0])

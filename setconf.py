@@ -3,7 +3,7 @@ import os
 import random
 from src.network.KNC import KNC
 from src.network.CCC import CCC
-# from src.network.SEN import SEN
+from src.network.SEN import SEN
 
 def main():
     dir = 'conf/'
@@ -19,12 +19,17 @@ def main():
     elif len(sys.argv) == 4 and sys.argv[2].upper() in ['CCC', 'CCC_DF']:
         network = CCC(int(sys.argv[3]))
         file.write(sys.argv[2].upper() + ' ' + sys.argv[3] + ' ' + "\n\n")
+    elif len(sys.argv) == 4 and sys.argv[2].upper() in ['SEN', 'SEN_DF']:
+        network = SEN(int(sys.argv[3]))
+        file.write(sys.argv[2].upper() + ' ' + sys.argv[3] + ' ' + "\n\n")
     else:
         print("invalid command.. options you can use:")
         print('python setconf.py [alias] KNC [k] [n]')
         print('python setconf.py [alias] KNC_DF [k] [n]')
         print('python setconf.py [alias] CCC [n]')
         print('python setconf.py [alias] CCC_DF [n]')
+        print('python setconf.py [alias] SEN [n]')
+        print('python setconf.py [alias] SEN_DF [n]')
         file.close()
         return -1
 

@@ -1,6 +1,6 @@
 from src.network.KNC import KNC, KNC_DF
 from src.network.CCC import CCC, CCC_DF
-# from src.network.SEN import SEN, SEN_DF
+from src.network.SEN import SEN#, SEN_DF
 
 class Flit:
     def __init__(self, index, src, dst, next):
@@ -11,7 +11,8 @@ class Flit:
         self.next = next
         self.tick = 0
         self.tottick = 0
-        self.tothop = 0
+        self.tothop = -1
+        self.aux = -1
     
     def printsummary(self):
         print('f' + str(self.index) + ':', end='\t')
@@ -75,6 +76,10 @@ class Sim:
                         self.network = CCC(int(args[1]))
                     elif len(args) == 2 and args[0] == 'CCC_DF':
                         self.network = CCC_DF(int(args[1]))
+                    elif len(args) == 2 and args[0] == 'SEN':
+                        self.network = SEN(int(args[1]))
+                    # elif len(args) == 2 and args[0] == 'SEN_DF':
+                    #     self.network = SEN_DF(int(args[1]))
                     else:
                         self.invalidconf()
                 elif index == 1:
@@ -169,6 +174,8 @@ class Sim:
                     target.queue.append(flit)
                     flit.pos = target
                     flit.tick = 0
+                    flit.tothop += 1
+                    flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
 
         for channel in self.network.channels.values():
             if len(channel.queue) > 0:
@@ -186,6 +193,7 @@ class Sim:
                         flit.pos = target
                         flit.tick = 0
                         flit.tothop += 1
+                        flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
 
         for node in self.network.nodes.values():
             node.refresh()
