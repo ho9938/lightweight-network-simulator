@@ -8,6 +8,16 @@ class Node:
         self.senario.clear()
         self.queue.clear()
 
+    def push(self, flit):
+        self.queue.append(flit)
+        flit.pos = self
+        flit.tick = 0
+        
+    def pop(self):
+        flit = self.queue.pop(0)
+        flit.pos = None
+        flit.tick = 0
+
     def refresh(self):
         for flit in self.queue:
             flit.tick += 1

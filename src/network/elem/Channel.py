@@ -17,8 +17,9 @@ class Policy(Enum):
             return Policy.DEFAULT
     
 class VChannel:
-    def __init__(self, name, length, capacity, parent):
+    def __init__(self, name, line, length, capacity, parent):
         self.name = name
+        self.line = line
         self.queue = []
         self.next = -1
         self.length = length
@@ -33,11 +34,30 @@ class VChannel:
     
     def is_full(self):
         return len(self.queue) >= self.capacity
+    
+    def push(self, flit):
+        self.queue.append(flit)
+        flit.pos = self
+        flit.tick = 0
+        flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
+        self.next = flit.next
+        
+    def pop(self):
+        flit = self.queue.pop(0)
+        flit.pos = None
+        flit.tick = 0
 
     def refresh(self):
         for flit in self.queue:
             flit.tick += 1
             flit.tottick += 1
+        while len(self.queue) > 0:
+            flit = self.queue[0]
+            if flit.tick >= self.length and flit.dst == self.parent.dst:
+                self.queue.pop(0)
+            else:
+                return
+                
 
     def is_available(self, index):
         if self.is_empty():
@@ -58,7 +78,7 @@ class PChannel:
         self.name = name
         self.src = src
         self.dst = dst
-        self.vchannels = [VChannel(name, lgth, cap, self) for _ in range(dim)]
+        self.vchannels = [VChannel(name, i, lgth, cap, self) for i in range(dim)]
         self.dimension = dim
         self.policy = pol
         self.latest = dim - 1

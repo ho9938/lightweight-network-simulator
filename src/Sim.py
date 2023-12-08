@@ -155,22 +155,16 @@ class Sim:
                     node.queue.append(flit)
                 flit = Flit(len(self.flits), node, flitgen.dst, -1)
                 self.flits.append(flit)
-                node.queue.append(flit)
+                node.push(flit)
 
             if len(node.queue) > 0:
                 flit = node.queue[0]
                 target = self.network.route(flit)
                 if not target:
-                    node.queue.pop(0)
-                    flit.pos = None
-                    flit.tick = 0
+                    node.pop()
                 elif target.is_available(flit.index):
-                    node.queue.pop(0)
-                    target.queue.append(flit)
-                    target.next = flit.next
-                    flit.pos = target
-                    flit.tick = 0
-                    flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
+                    node.pop()
+                    target.push(flit)
 
         for pchannel in self.network.channels.values():
             vchannel = pchannel.geturgent()
@@ -179,16 +173,10 @@ class Sim:
                 if flit.tick >= vchannel.length:
                     target = self.network.route(flit)
                     if not target:
-                        vchannel.queue.pop(0)
-                        flit.pos = None
-                        flit.tick = 0
+                        vchannel.pop()
                     elif target.is_available(flit.index):
-                        vchannel.queue.pop(0)
-                        target.queue.append(flit)
-                        target.next = flit.next
-                        flit.pos = target
-                        flit.tick = 0
-                        flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
+                        vchannel.pop()
+                        target.push(flit)
 
         for node in self.network.nodes.values():
             node.refresh()
