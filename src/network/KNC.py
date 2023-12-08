@@ -33,7 +33,7 @@ class KNC:
         nodes = []
         dfs(self.k, self.n, '', nodes)
         for index in nodes:
-            name = 'n'+index
+            name = 'n' + index
             self.nodes[name] = Node(name)
 
     def initchannels(self):
@@ -45,7 +45,7 @@ class KNC:
                 name = 'c' + str(i) + srcidx
                 dst = self.nodes['n' + dstidx]
                 lgth = self.chnlen
-                cap = self.chncap*2 if self.policy == Policy.DEFAULT else self.chncap*2
+                cap = self.chncap*2 if self.policy == Policy.DEFAULT else self.chncap
                 dim = 1 if self.policy == Policy.DEFAULT else 2
                 pol = self.policy
                 self.channels[name] = PChannel(name, src, dst, lgth, cap, dim, pol)
@@ -60,15 +60,15 @@ class KNC:
         
         if srcidx == dstidx:
             return None
+        
+        # else
+        pos = 0
+        while srcidx[pos] == dstidx[pos]:
+            pos += 1
+        if srcidx[pos] < dstidx[pos] and srcidx[pos] != 0:
+            pchannel = self.channels['c' + str(self.n-1-pos) + srcidx]
+            line = 0 if self.policy == Policy.DEFAULT else 1
         else:
-            pos = 0
-            while srcidx[pos] == dstidx[pos]:
-                pos += 1
-            if srcidx[pos] < dstidx[pos] and srcidx[pos] != 0:
-                pchannel = self.channels['c' + str(self.n-1-pos) + srcidx]
-                line = 0 if self.policy == Policy.DEFAULT else 1
-                return pchannel.vchannels[line]
-            else:
-                pchannel = self.channels['c' + str(self.n-1-pos) + srcidx]
-                line = 0 if self.policy == Policy.DEFAULT else 0
-                return pchannel.vchannels[line]
+            pchannel = self.channels['c' + str(self.n-1-pos) + srcidx]
+            line = 0 if self.policy == Policy.DEFAULT else 0
+        return pchannel.vchannels[line]

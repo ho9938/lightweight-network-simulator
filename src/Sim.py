@@ -12,7 +12,6 @@ class Flit:
         self.next = next
         self.tick = 0
         self.tottick = 0
-        self.tothop = -1
         self.aux = -1
     
     def printsummary(self):
@@ -27,7 +26,6 @@ class Flit:
         print("current position: " + (self.pos.name if self.pos else "removed"))
         print("tick in current queue: " + str(self.tick))
         print("total tick since created: " + str(self.tottick))
-        print("total hop since created: " + str(self.tothop))
     
 class FlitGen:
     def __init__(self, tick, src, dst, length):
@@ -71,10 +69,8 @@ class Sim:
                 if index == 0:
                     if len(args) == 4 and args[0] == 'KNC':
                         self.network = KNC(int(args[1]), int(args[2]), Policy.getpolicy(args[3]))
-                    elif len(args) == 2 and args[0] == 'CCC':
-                        self.network = CCC(int(args[1]))
-                    elif len(args) == 2 and args[0] == 'CCC_DF':
-                        self.network = CCC_DF(int(args[1]))
+                    elif len(args) == 3 and args[0] == 'CCC':
+                        self.network = CCC(int(args[1]), Policy.getpolicy(args[2]))
                     elif len(args) == 2 and args[0] == 'SEN':
                         self.network = SEN(int(args[1]))
                     elif len(args) == 2 and args[0] == 'SEN_DF':
@@ -173,7 +169,6 @@ class Sim:
                     target.queue.append(flit)
                     flit.pos = target
                     flit.tick = 0
-                    flit.tothop += 1
                     flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
 
         for pchannel in self.network.channels.values():
@@ -186,13 +181,11 @@ class Sim:
                         vchannel.queue.pop(0)
                         flit.pos = None
                         flit.tick = 0
-                        flit.tothop += 1
                     elif target.is_available(flit.index):
                         vchannel.queue.pop(0)
                         target.queue.append(flit)
                         flit.pos = target
                         flit.tick = 0
-                        flit.tothop += 1
                         flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
 
         for node in self.network.nodes.values():

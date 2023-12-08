@@ -17,7 +17,8 @@ class Policy(Enum):
             return Policy.DEFAULT
     
 class VChannel:
-    def __init__(self, length, capacity, parent):
+    def __init__(self, name, length, capacity, parent):
+        self.name = name
         self.queue = []
         self.size = 0
         self.length = length
@@ -59,7 +60,7 @@ class PChannel:
         self.name = name
         self.src = src
         self.dst = dst
-        self.vchannels = [VChannel(lgth, cap, self) for _ in range(dim)]
+        self.vchannels = [VChannel(name, lgth, cap, self) for _ in range(dim)]
         self.dimension = dim
         self.policy = pol
         self.latest = dim - 1
