@@ -5,13 +5,16 @@ This simulator is made to simulate routing algorithm and check deadlock state.
 python setconf.py [alias] [network type] [args..]
 : you can generate configuration files for specific network.
 : sentence that starts with '//' is recognized as comment.
-: configuration files are saved into conf/[alias].conf
+: configuration files are saved into conf/[alias]_[policy].conf
+: configuration files for following policies are automatically generated:
+: - RR (round-robin)
+: - FCFS (first-come first-served)
+: - OF (oldest first)
 : to add packet generation senarios, modify this file according to the comment.
 : in current version, we support following algorithms:
-: - KNC (k_ary_n_cube)
-: - KNC_DF (k_ary_n_cube_dfree)
-: - CCC (cube_connected_cycle)
-: - CCC_DF (cube_connected_cycle_dfree)
+: - KNC (k-ary n-cubes)
+: - CCC (cube-connected cycles)
+: - SEN (shuffle-exchange networks)
 
 python main.py [conf_alias]
 : you can load network environment from the configuration files.
