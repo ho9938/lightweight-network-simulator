@@ -1,6 +1,6 @@
 from src.network.KNC import KNC
 from src.network.CCC import CCC
-from src.network.SEN import SEN, SEN_DF
+from src.network.SEN import SEN
 from src.network.elem.Channel import Policy
 
 class Flit:
@@ -71,10 +71,8 @@ class Sim:
                         self.network = KNC(int(args[1]), int(args[2]), Policy.getpolicy(args[3]))
                     elif len(args) == 3 and args[0] == 'CCC':
                         self.network = CCC(int(args[1]), Policy.getpolicy(args[2]))
-                    elif len(args) == 2 and args[0] == 'SEN':
-                        self.network = SEN(int(args[1]))
-                    elif len(args) == 2 and args[0] == 'SEN_DF':
-                        self.network = SEN_DF(int(args[1]))
+                    elif len(args) == 3 and args[0] == 'SEN':
+                        self.network = SEN(int(args[1]), Policy.getpolicy(args[2]))
                     else:
                         self.invalidconf()
                 elif index == 1:

@@ -42,7 +42,6 @@ class CCC:
             self.nodes[name] = Node(name)
 
     def initchannels(self):
-        channels = []
         for src in self.nodes.values():
             for i in range(2):
                 srcidx = src.name[1:]
@@ -51,7 +50,7 @@ class CCC:
                 name = 'c'+ srcidx[0] + str(i) + srcidx[1:]
                 dst = self.nodes['n' + dstidx]
                 lgth = self.chnlen
-                cap = self.chncap*3 if self.policy == Policy.DEFAULT or i == 1 else self.chncap
+                cap = self.chncap * 3 if self.policy == Policy.DEFAULT or i == 1 else self.chncap
                 dim = 1 if self.policy == Policy.DEFAULT or i == 1 else 3
                 pol = self.policy
                 self.channels[name] = PChannel(name, src, dst, lgth, cap, dim, pol)

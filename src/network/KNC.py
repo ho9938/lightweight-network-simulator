@@ -45,7 +45,7 @@ class KNC:
                 name = 'c' + str(i) + srcidx
                 dst = self.nodes['n' + dstidx]
                 lgth = self.chnlen
-                cap = self.chncap*2 if self.policy == Policy.DEFAULT else self.chncap
+                cap = self.chncap * 2 if self.policy == Policy.DEFAULT else self.chncap
                 dim = 1 if self.policy == Policy.DEFAULT else 2
                 pol = self.policy
                 self.channels[name] = PChannel(name, src, dst, lgth, cap, dim, pol)
