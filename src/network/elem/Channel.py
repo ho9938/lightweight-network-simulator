@@ -1,12 +1,28 @@
-class Channel:
-    def __init__(self, name, length, capacity):
-        self.name = name
-        self.src = ''
-        self.dst = ''
-        self.length = length
+from enum import Enum, auto
+
+class Policy(Enum):
+    DEFAULT = auto() # no virtual channel
+    RR = auto() # round-robin
+    FCFS = auto() # first come first served
+    OF = auto() # oldest first
+
+    def getpolicy(str):
+        if str == 'RR':
+            return Policy.RR
+        elif str == 'FCFS':
+            return Policy.FCFS
+        elif str == 'OF':
+            return Policy.OF
+        else:
+            return Policy.DEFAULT
+    
+class VChannel:
+    def __init__(self, length, capacity, parent):
         self.queue = []
         self.size = 0
+        self.length = length
         self.capacity = capacity
+        self.parent = parent
     
     def clear(self):
         self.queue.clear()
@@ -38,20 +54,67 @@ class Channel:
         else:
             return False
 
+class PChannel:
+    def __init__(self, name, src, dst, lgth, cap, dim, pol):
+        self.name = name
+        self.src = src
+        self.dst = dst
+        self.vchannels = [VChannel(lgth, cap, self) for _ in range(dim)]
+        self.dimension = dim
+        self.policy = pol
+        self.latest = dim - 1
+    
+    def geturgent(self):
+        index = 0
+        if self.policy == Policy.RR:
+            index = (self.latest+1) % self.dimension
+        elif self.policy == Policy.FCFS:
+            maxtick = -1
+            for i in range(self.dimension):
+                vchannel = self.vchannels[i]
+                if len(vchannel.queue) == 0:
+                    continue
+                if maxtick < vchannel.queue[0].tick:
+                    maxtick = vchannel.queue[0].tick
+                    index = i
+        elif self.policy == Policy.OF:
+            maxttick = -1
+            for i in range(self.dimension):
+                vchannel = self.vchannels[i]
+                if len(vchannel.queue) == 0:
+                    continue
+                if maxttick < vchannel.queue[0].tottick:
+                    maxttick = vchannel.queue[0].tottick
+                    index = i
+        self.latest = index
+        return self.vchannels[index]
+    
+    def clear(self):
+        for vchannel in self.vchannels:
+            vchannel.clear()
+
+    def refresh(self):
+        for vchannel in self.vchannels:
+            vchannel.refresh()
+
     def printsummary(self):
         print(self.name + ':', end='\t')
-        print(str(self.size) + '/' + str(self.capacity), end='\t')
-        print("queue: [", end=' ')
-        for flit in self.queue:
-            print('f' + str(flit.index), end=' ')
-        print("]")
+        for i in range(self.dimension):
+            vchannel = self.vchannels[i]
+            print(str(i) + ' (' + str(vchannel.size) + '/' + str(vchannel.capacity) + ') [', end=' ')
+            for flit in vchannel.queue:
+                print('f' + str(flit.index), end=' ')
+            print("]", end='\t')
+        print()
 
     def printstat(self):
-        print("source: " + self.src)
-        print("destination: " + self.dst)
-        print("length: " + str(self.length))
-        print("capacity: " + str(self.size) + '/' + str(self.capacity))
-        print("queue: [", end=' ')
-        for flit in self.queue:
-            print('f' + str(flit.index), end=' ')
-        print("]")
+        print("source: " + self.src.name)
+        print("destination: " + self.dst.name)
+        for i in range(self.dimension):
+            vchannel = self.vchannels[i]
+            print("length: " + str(vchannel.length), end='\t')
+            print("capacity: " + str(vchannel.size) + '/' + str(vchannel.capacity), end='\t')
+            print("queue: [", end=' ')
+            for flit in vchannel.queue:
+                print('f' + str(flit.index), end=' ')
+            print("]")

@@ -1,6 +1,7 @@
-from src.network.KNC import KNC, KNC_DF
+from src.network.KNC import KNC
 from src.network.CCC import CCC, CCC_DF
 from src.network.SEN import SEN, SEN_DF
+from src.network.elem.Channel import Policy
 
 class Flit:
     def __init__(self, index, src, dst, next):
@@ -68,10 +69,8 @@ class Sim:
                     continue
 
                 if index == 0:
-                    if len(args) == 3 and args[0] == 'KNC':
-                        self.network = KNC(int(args[1]), int(args[2]))
-                    elif len(args) == 3 and args[0] == 'KNC_DF':
-                        self.network = KNC_DF(int(args[1]), int(args[2]))
+                    if len(args) == 4 and args[0] == 'KNC':
+                        self.network = KNC(int(args[1]), int(args[2]), Policy.getpolicy(args[3]))
                     elif len(args) == 2 and args[0] == 'CCC':
                         self.network = CCC(int(args[1]))
                     elif len(args) == 2 and args[0] == 'CCC_DF':
@@ -177,18 +176,19 @@ class Sim:
                     flit.tothop += 1
                     flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
 
-        for channel in self.network.channels.values():
-            if len(channel.queue) > 0:
-                flit = channel.queue[0]
-                if flit.tick >= channel.length:
+        for pchannel in self.network.channels.values():
+            vchannel = pchannel.geturgent()
+            if len(vchannel.queue) > 0:
+                flit = vchannel.queue[0]
+                if flit.tick >= vchannel.length:
                     target = self.network.route(flit)
                     if not target:
-                        channel.queue.pop(0)
+                        vchannel.queue.pop(0)
                         flit.pos = None
                         flit.tick = 0
                         flit.tothop += 1
                     elif target.is_available(flit.index):
-                        channel.queue.pop(0)
+                        vchannel.queue.pop(0)
                         target.queue.append(flit)
                         flit.pos = target
                         flit.tick = 0

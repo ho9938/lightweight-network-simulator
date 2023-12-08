@@ -1,5 +1,5 @@
 from src.network.elem.Node import Node
-from src.network.elem.Channel import Channel
+from src.network.elem.Channel import PChannel, Policy
 
 def out_flip(x):
     dim = int(x[0])
