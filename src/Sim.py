@@ -1,5 +1,5 @@
 from src.network.KNC import KNC
-from src.network.CCC import CCC, CCC_DF
+from src.network.CCC import CCC
 from src.network.SEN import SEN, SEN_DF
 from src.network.elem.Channel import Policy
 
@@ -167,6 +167,7 @@ class Sim:
                 elif target.is_available(flit.index):
                     node.queue.pop(0)
                     target.queue.append(flit)
+                    target.next = flit.next
                     flit.pos = target
                     flit.tick = 0
                     flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux
@@ -184,6 +185,7 @@ class Sim:
                     elif target.is_available(flit.index):
                         vchannel.queue.pop(0)
                         target.queue.append(flit)
+                        target.next = flit.next
                         flit.pos = target
                         flit.tick = 0
                         flit.aux = flit.aux+1 if flit.aux > 0 else flit.aux

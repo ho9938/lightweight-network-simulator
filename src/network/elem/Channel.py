@@ -20,23 +20,21 @@ class VChannel:
     def __init__(self, name, length, capacity, parent):
         self.name = name
         self.queue = []
-        self.size = 0
+        self.next = -1
         self.length = length
         self.capacity = capacity
         self.parent = parent
     
     def clear(self):
         self.queue.clear()
-        self.size = 0
 
     def is_empty(self):
-        return self.size == 0
+        return len(self.queue) == 0
     
     def is_full(self):
-        return self.size >= self.capacity
+        return len(self.queue) >= self.capacity
 
     def refresh(self):
-        self.size = len(self.queue)
         for flit in self.queue:
             flit.tick += 1
             flit.tottick += 1
@@ -48,9 +46,9 @@ class VChannel:
             return False
         if len(self.queue) == 0:
             return False
-        if self.queue[-1].next == -1:
+        if self.next == -1:
             return True
-        elif self.queue[-1].next == index:
+        elif self.next == index:
             return True
         else:
             return False
@@ -102,7 +100,7 @@ class PChannel:
         print(self.name + ':', end='\t')
         for i in range(self.dimension):
             vchannel = self.vchannels[i]
-            print(str(i) + ' (' + str(vchannel.size) + '/' + str(vchannel.capacity) + ') [', end=' ')
+            print(str(i) + ' (' + str(len(vchannel.queue)) + '/' + str(vchannel.capacity) + ') [', end=' ')
             for flit in vchannel.queue:
                 print('f' + str(flit.index), end=' ')
             print("]", end='\t')
@@ -114,7 +112,7 @@ class PChannel:
         for i in range(self.dimension):
             vchannel = self.vchannels[i]
             print("length: " + str(vchannel.length), end='\t')
-            print("capacity: " + str(vchannel.size) + '/' + str(vchannel.capacity), end='\t')
+            print("capacity: " + str(len(vchannel.queue)) + '/' + str(vchannel.capacity), end='\t')
             print("queue: [", end=' ')
             for flit in vchannel.queue:
                 print('f' + str(flit.index), end=' ')
