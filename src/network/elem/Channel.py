@@ -83,31 +83,33 @@ class PChannel:
         self.policy = pol
         self.latest = dim - 1
     
-    def geturgent(self):
-        index = 0
-        if self.policy == Policy.RR:
-            index = (self.latest+1) % self.dimension
-        elif self.policy == Policy.FCFS:
-            maxtick = -1
-            for i in range(self.dimension):
-                vchannel = self.vchannels[i]
-                if len(vchannel.queue) == 0:
-                    continue
-                if maxtick < vchannel.queue[0].tick:
-                    maxtick = vchannel.queue[0].tick
-                    index = i
-        elif self.policy == Policy.OF:
-            maxttick = -1
-            for i in range(self.dimension):
-                vchannel = self.vchannels[i]
-                if len(vchannel.queue) == 0:
-                    continue
-                if maxttick < vchannel.queue[0].tottick:
-                    maxttick = vchannel.queue[0].tottick
-                    index = i
+    def setlatest(self, index):
         self.latest = index
-        return self.vchannels[index]
     
+    def geturgent(self):
+        vchannel = None
+        indices = []
+        if self.policy == Policy.RR:
+            index = self.latest
+            for pri in range(self.dimension, 0, -1):
+                index = (index + 1) % self.dimension
+                indices.append((index, pri))
+        elif self.policy == Policy.FCFS:
+            for index in range(self.dimension):
+                vchannel = self.vchannels[index]
+                if len(vchannel.queue) == 0:
+                    continue
+                indices.append((index, vchannel.queue[0].tick))
+        elif self.policy == Policy.OF:
+            for index in range(self.dimension):
+                vchannel = self.vchannels[index]
+                if len(vchannel.queue) == 0:
+                    continue
+                indices.append((index, vchannel.queue[0].tottick))
+
+        indices.sort(key=lambda x: -x[1])
+        return [x[0] for x in indices]
+
     def clear(self):
         for vchannel in self.vchannels:
             vchannel.clear()

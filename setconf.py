@@ -37,7 +37,9 @@ def main():
         print('python setconf.py [alias] KNC [k] [n]')
         print('python setconf.py [alias] CCC [n]')
         print('python setconf.py [alias] SEN [n]')
-        file.close()
+        for file in files:
+            file.close()
+            os.remove(file.name)
         return -1
 
     files[0].write("DEFAULT\n\n")

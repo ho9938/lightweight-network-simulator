@@ -12,7 +12,7 @@ class Flit:
         self.next = next
         self.tick = 0
         self.tottick = 0
-        self.aux = -1
+        self.aux = 1
     
     def printsummary(self):
         print('f' + str(self.index) + ':', end='\t')
@@ -92,7 +92,6 @@ class Sim:
                     src.scenario.append(FlitGen(tick, src, dst, length))
                     
                 index += 1
-
         
         for node in self.network.nodes.values():
             node.scenario.sort(key=lambda x: x.tick)
@@ -146,7 +145,7 @@ class Sim:
             tottick += flit.tottick
             
         print("deadlock: " + ("YES" if deadlock else "NO"))
-        print("average ticks spent: " + str(tottick // len(self.flits)))
+        print("average ticks spent: " + str(tottick / len(self.flits)))
 
     def proceed(self):
         self.tick += 1
@@ -178,16 +177,22 @@ class Sim:
                     target.push(flit)
 
         for pchannel in self.network.channels.values():
-            vchannel = pchannel.geturgent()
-            if len(vchannel.queue) > 0:
+            indices = pchannel.geturgent()
+            for index in indices:
+                vchannel = pchannel.vchannels[index]
+                if len(vchannel.queue) <= 0:
+                    continue
                 flit = vchannel.queue[0]
-                if flit.tick >= vchannel.length:
-                    target = self.network.route(flit)
-                    if not target:
-                        vchannel.pop()
-                    elif target.is_available(flit.index):
-                        vchannel.pop()
-                        target.push(flit)
+                if flit.tick < vchannel.length:
+                    continue
+                target = self.network.route(flit)
+                if not target:
+                    continue
+                if target.is_available(flit.index):
+                    vchannel.pop()
+                    target.push(flit)
+                    pchannel.setlatest(index)
+                    break
 
         for node in self.network.nodes.values():
             node.refresh()
