@@ -1,11 +1,11 @@
 class Node:
     def __init__(self, name:str):
         self.name = name
-        self.senario = []
+        self.scenario = []
         self.queue = []
     
     def clear(self):
-        self.senario.clear()
+        self.scenario.clear()
         self.queue.clear()
 
     def push(self, flit):
@@ -35,6 +35,6 @@ class Node:
         for flit in self.queue:
             print('f' + str(flit.index), end=' ')
         print("]")
-        print("senario remaining: ")
-        for sen in self.senario:
+        print("scenario remaining: ")
+        for sen in self.scenario:
             sen.printsummary()

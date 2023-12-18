@@ -47,7 +47,7 @@ class CCC:
                 srcidx = src.name[1:]
                 dstidx = in_dec(srcidx, self.n) if i == 0 else out_flip(srcidx)
 
-                name = 'c'+ srcidx[0] + str(i) + srcidx[1:]
+                name = 'c' + srcidx[0] + str(i) + srcidx[1:]
                 dst = self.nodes['n' + dstidx]
                 lgth = self.chnlen
                 cap = self.chncap * 3 if self.policy == Policy.DEFAULT or i == 1 else self.chncap

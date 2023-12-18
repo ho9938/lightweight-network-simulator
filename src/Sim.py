@@ -49,14 +49,14 @@ class Sim:
         self.alias = alias
     
     def init(self):
-        self.readsenario()
+        self.readscenario()
         self.printstat()
 
     def invalidconf(self):
         print("invalid configuration")
         exit(-1)
 
-    def readsenario(self):
+    def readscenario(self):
         with open("conf/" + self.alias + ".conf", 'r') as f:
             index = 0
             for line in f.readlines():
@@ -88,13 +88,13 @@ class Sim:
                         self.invalidconf()
                     src = self.network.nodes[_src]
                     dst = self.network.nodes[_dst]
-                    src.senario.append(FlitGen(tick, src, dst, length))
+                    src.scenario.append(FlitGen(tick, src, dst, length))
                     
                 index += 1
 
         
         for node in self.network.nodes.values():
-            node.senario.sort(key=lambda x: x.tick)
+            node.scenario.sort(key=lambda x: x.tick)
                     
     def printstat(self):
         print("<Lightweigth Network Simulator>")
@@ -108,8 +108,8 @@ class Sim:
         self.printchannels()
         print()
     
-        print("senario: ")
-        self.printsenario()
+        print("scenario: ")
+        self.printscenario()
         print()
 
     def printnodes(self):
@@ -124,24 +124,24 @@ class Sim:
         for flit in self.flits:
             flit.printsummary()
     
-    def printsenario(self):
-        senarios = []
+    def printscenario(self):
+        scenarios = []
         for node in self.network.nodes.values():
-            for sen in node.senario:
-                senarios.append(sen)
+            for sen in node.scenario:
+                scenarios.append(sen)
 
-        senarios.sort(key=lambda x: (x.tick, x.src.name))
+        scenarios.sort(key=lambda x: (x.tick, x.src.name))
 
-        for sen in senarios:
+        for sen in scenarios:
             sen.printsummary()
 
     def proceed(self):
         self.tick += 1
 
         for node in self.network.nodes.values():
-            while len(node.senario) > 0 and node.senario[0].tick <= self.tick:
-                flitgen = node.senario[0]
-                node.senario.pop(0)
+            while len(node.scenario) > 0 and node.scenario[0].tick <= self.tick:
+                flitgen = node.scenario[0]
+                node.scenario.pop(0)
 
                 if node == flitgen.dst:
                     continue
@@ -191,4 +191,4 @@ class Sim:
             channel.clear()
         self.flits.clear()
 
-        self.readsenario()
+        self.readscenario()

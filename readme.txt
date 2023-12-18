@@ -10,7 +10,7 @@ python setconf.py [alias] [network type] [args..]
 : - RR (round-robin)
 : - FCFS (first-come first-served)
 : - OF (oldest first)
-: to add packet generation senarios, modify this file according to the comment.
+: to add packet generation scenarios, modify this file according to the comment.
 : in current version, we support following algorithms:
 : - KNC (k-ary n-cubes)
 : - CCC (cube-connected cycles)
@@ -18,7 +18,7 @@ python setconf.py [alias] [network type] [args..]
 
 python main.py [conf_alias]
 : you can load network environment from the configuration files.
-: the program prints information of nodes, channels and senario.
+: the program prints information of nodes, channels and scenario.
 
 (LNS) r
 : run the simulation from the beginning.

@@ -42,7 +42,7 @@ class SEN:
                 srcidx = src.name[1:]
                 dstidx = rol(srcidx) if i == 0 else flip(srcidx)
 
-                name = 'c'+ str(i) + srcidx
+                name = 'c' + str(i) + srcidx
                 dst = self.nodes['n' + dstidx]
                 lgth = self.chnlen
                 cap = self.chncap * self.n if self.policy == Policy.DEFAULT else self.chncap
