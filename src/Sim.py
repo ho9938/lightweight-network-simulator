@@ -27,6 +27,10 @@ class Flit:
         print("tick in current queue: " + str(self.tick))
         print("total tick since created: " + str(self.tottick))
     
+    def markremoved(self):
+        self.pos = None
+        self.tick = 0
+    
 class FlitGen:
     def __init__(self, tick, src, dst, length):
         self.tick = tick
@@ -47,11 +51,8 @@ class Sim:
         self.network = None
         self.flits = []
         self.alias = alias
-    
-    def init(self):
         self.readscenario()
-        self.printstat()
-
+    
     def invalidconf(self):
         print("invalid configuration")
         exit(-1)
@@ -134,6 +135,18 @@ class Sim:
 
         for sen in scenarios:
             sen.printsummary()
+        
+    def printresult(self):
+        deadlock = False
+        tottick = 0
+
+        for flit in self.flits:
+            if flit.pos:
+                deadlock = True
+            tottick += flit.tottick
+            
+        print("deadlock: " + ("YES" if deadlock else "NO"))
+        print("average ticks spent: " + str(tottick // len(self.flits)))
 
     def proceed(self):
         self.tick += 1

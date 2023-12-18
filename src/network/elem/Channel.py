@@ -48,17 +48,17 @@ class VChannel:
         flit.tick = 0
 
     def refresh(self):
-        for flit in self.queue:
-            flit.tick += 1
-            flit.tottick += 1
         while len(self.queue) > 0:
             flit = self.queue[0]
             if flit.tick >= self.length and flit.dst == self.parent.dst:
+                flit.markremoved()
                 self.queue.pop(0)
             else:
-                return
+                break
+        for flit in self.queue:
+            flit.tick += 1
+            flit.tottick += 1
                 
-
     def is_available(self, index):
         if self.is_empty():
             return True

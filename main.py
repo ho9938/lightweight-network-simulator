@@ -116,25 +116,36 @@ def parse(sim, args: list):
     return 1
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) == 2:
+        if not os.path.isfile("conf/" + sys.argv[1] + ".conf"):
+            print("invalid configuration")
+            exit(-1)
+        
+        sim = Sim(sys.argv[1])
+        sim.printstat()
+
+        while True:
+            cmd = input('(LNS) ')
+            args = cmd.split()
+            ret = parse(sim, args)
+            if ret == 0:
+                break
+            elif ret == -1:
+                print("invalid command")
+    elif len(sys.argv) == 3 and sys.argv[2] == '--direct':
+        if not os.path.isfile("conf/" + sys.argv[1] + ".conf"):
+            print("invalid configuration")
+            exit(-1)
+        
+        sim = Sim(sys.argv[1])
+
+        while sim.tick < sim.maxtick:
+            sim.proceed()
+        
+        sim.printresult()
+    else:
         print("usage:")
-        print("python main.py [alias]")
+        print("python main.py [alias] [--direct]")
 
-    if not os.path.isfile("conf/" + sys.argv[1] + ".conf"):
-        print("invalid configuration")
-        exit(-1)
-    
-    sim = Sim(sys.argv[1])
-    sim.init()
-
-    while True:
-        cmd = input('(LNS) ')
-        args = cmd.split()
-        ret = parse(sim, args)
-        if ret == 0:
-            break
-        elif ret == -1:
-            print("invalid command")
-    
 if __name__ == '__main__':
     main()

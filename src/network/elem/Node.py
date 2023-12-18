@@ -19,6 +19,13 @@ class Node:
         flit.tick = 0
 
     def refresh(self):
+        while len(self.queue) > 0:
+            flit = self.queue[0]
+            if flit.dst == self:
+                flit.markremoved()
+                self.queue.pop(0)
+            else:
+                break
         for flit in self.queue:
             flit.tick += 1
             flit.tottick += 1
