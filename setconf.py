@@ -23,15 +23,15 @@ def main():
     if len(sys.argv) == 5 and sys.argv[2].upper() == 'KNC':
         network = KNC(int(sys.argv[3]), int(sys.argv[4]), Policy.DEFAULT)
         for file in files:
-            file.write(sys.argv[2] + ' ' + sys.argv[3] + ' ' + sys.argv[4] + ' ')
+            file.write("KNC" + ' ' + sys.argv[3] + ' ' + sys.argv[4] + ' ')
     elif len(sys.argv) == 4 and sys.argv[2].upper() == 'CCC':
         network = CCC(int(sys.argv[3]), Policy.DEFAULT)
         for file in files:
-            file.write(sys.argv[2].upper() + ' ' + sys.argv[3] + ' ')
+            file.write("CCC" + ' ' + sys.argv[3] + ' ')
     elif len(sys.argv) == 4 and sys.argv[2].upper() == 'SEN':
         network = SEN(int(sys.argv[3]), Policy.DEFAULT)
         for file in files:
-            file.write(sys.argv[2].upper() + ' ' + sys.argv[3] + ' ')
+            file.write("SEN" + ' ' + sys.argv[3] + ' ')
     else:
         print("invalid command.. options you can use:")
         print('python setconf.py [alias] KNC [k] [n]')
@@ -44,6 +44,10 @@ def main():
     files[1].write("RR\n\n")
     files[2].write("FCFS\n\n")
     files[3].write("OF\n\n")
+
+    for file in files:
+        file.write("// [endpoint]\n")
+        file.write("5000\n\n")
 
     nodes = list(network.nodes.keys())
     ticks = sorted(random.choices(range(50), k=50))
