@@ -16,7 +16,7 @@ python setconf.py [alias] [network type] [args..]
 : - CCC (cube-connected cycles)
 : - SEN (shuffle-exchange networks)
 
-python main.py [conf_alias] [--direct]
+python simulator.py [conf_alias] [--direct]
 : you can load network environment from the configuration files.
 : the program prints information of nodes, channels and scenario.
 : if you add --direct argument at the end, it simulates network directly 

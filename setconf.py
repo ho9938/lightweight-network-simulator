@@ -52,14 +52,15 @@ def main():
         file.write("5000\n\n")
 
     nodes = list(network.nodes.keys())
-    ticks = sorted(random.choices(range(50), k=50))
-    srcs = random.choices(range(len(nodes)), k=50)
-    dsts = random.choices(range(len(nodes)), k=50)
-    lens = random.choices(range(50), k=50)
+    packets = len(nodes) * 5
+    ticks = sorted(random.choices(range(50), k=packets))
+    srcs = random.choices(range(len(nodes)), k=packets)
+    dsts = random.choices(range(len(nodes)), k=packets)
+    lens = random.choices(range(50), k=packets)
 
     for file in files:
         file.write("// [tick] [source] [destination] [length]\n")
-        for i in range(50):
+        for i in range(packets):
             file.write(str(ticks[i]) + ' ' + nodes[srcs[i]] + ' ' + nodes[dsts[i]] + ' ' + str(lens[i]) + '\n')
 
     for file in files:

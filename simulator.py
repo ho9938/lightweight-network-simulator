@@ -145,7 +145,7 @@ def main():
         sim.printresult()
     else:
         print("usage:")
-        print("python main.py [alias] [--direct]")
+        print("python simulator.py [alias] [--direct]")
 
 if __name__ == '__main__':
     main()

@@ -67,7 +67,7 @@ class CCC:
             return None
         
         # else
-        if srcidx[1:] == dstidx[1:]:
+        if srcidx[1:] == dstidx[1:] and int(srcidx[0]) > int(dstidx[0]):
             pchannel = self.channels['c' + srcidx[0] + '0' + srcidx[1:]]
             line = 0 if self.policy == Policy.DEFAULT else 2
         elif flit.aux > 0:

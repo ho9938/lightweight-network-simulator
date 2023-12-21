@@ -145,7 +145,7 @@ class Sim:
             tottick += flit.tottick
             
         print("deadlock: " + ("YES" if deadlock else "NO"))
-        print("average ticks spent: " + str(tottick / len(self.flits)))
+        print("avg_ticks: " + str(tottick / len(self.flits)))
 
     def proceed(self):
         self.tick += 1
